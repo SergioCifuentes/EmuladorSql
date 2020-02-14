@@ -1,0 +1,18 @@
+E              -> <PROYECTO name >  Comp  </PROYECTO>
+Comp     ->Carpeta Comp
+		    | Archivo Comp
+		    | e
+Carpeta  -><CARPETA name > Comp </CARPETA>
+Archivo  -> <ARCHIVO  name ubicacion=”path”/>
+name      -> nombre=”nom”
+path        -> path1.csv
+path1      ->/nom path1
+		 |e
+nom        -> Caracter nom
+		    |Caracter
+Caracter ->[A-Z]
+		     |[a-z]
+		     |[0-9]
+		     |  [-], [ _ ],[@], [+], [*], [#], [ . ]
+
+

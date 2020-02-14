@@ -5,6 +5,8 @@
  */
 package emuladorsql;
 
+import emuladorsql.ui.PantallaPrincipal;
+
 /**
  *
  * @author sergio
@@ -15,7 +17,10 @@ public class EmuladorSql {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        
+        
+        PantallaPrincipal pantallaPrincipal= new PantallaPrincipal();
+        pantallaPrincipal.setVisible(true);
     }
     
 }

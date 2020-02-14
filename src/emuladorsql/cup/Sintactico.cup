@@ -1,0 +1,76 @@
+package emuladorsql.cup;
+import java_cup.runtime.Symbol;
+import java.util.ArrayList;
+ parser code 
+{:
+    public Componente resultado; 
+
+    public void syntax_error(Symbol s){
+        String lexema = s.value.toString();
+        int fila = s.right;
+        int columna = s.left;
+        System.out.println("Error Sintactico Recuperado");
+        System.out.println("\t \tLexema: "+ lexema);
+        System.out.println("\t \tFila: "+ fila);
+        System.out.println("\t \tColumna: "+ columna);
+
+    }
+
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+        String lexema = s.value.toString();
+        int fila = s.right;
+        int columna = s.left;
+        System.out.println("Error Sintactico Panic Mode");
+        System.out.println("\t \tLexema: "+ lexema);
+        System.out.println("\t \tFila: "+ fila);
+        System.out.println("\t \tColumna: "+ columna);
+
+    }
+
+:}
+
+
+
+action code
+{:
+:}
+
+
+
+
+/* Terminals (tokens returned by the scanner). */
+terminal           PRO, CAR, ARC,NOM,UBI, ABR,CER,DIAA,DIAC,IGU,COM;
+terminal String    NOMBRE,PATH, ERROR;
+/* Non-terminals */
+non terminal            Ini,E,nombre,comp,archivo,carpeta;
+
+start with Ini;
+Ini::= E:e {:resultado=(Componente)e;:};
+E::= ABR PRO nombre:nombre CER comp:comp DIAA PRO CER {: System.out.println("Proyecto");Componente ar = new Componente((String)nombre,(ArrayList<Componente>)comp);
+                                                        System.out.println(ar+" arrrrr");
+                                                         RESULT=ar;:} ;
+comp ::= carpeta:a comp:b {:ArrayList<Componente> com = new ArrayList<>();
+                            com.add((Componente)a);
+                            if(b!=null){
+                            for(int i = 0; i<((ArrayList<Componente>)b).size();i++){
+                            com.add(((ArrayList<Componente>)b).get(i));
+                            };  
+                            }
+                            RESULT =com;:}
+        |archivo:a comp:b  {:ArrayList<Componente> com = new ArrayList<>();
+                            com.add((Componente)a);
+                            if(b!=null){
+                            for(int i = 0; i<((ArrayList<Componente>)b).size();i++){
+                            com.add(((ArrayList<Componente>)b).get(i));
+                            }; 
+                            }
+                             
+                            RESULT =com;:}
+        | ; 
+carpeta::= ABR CAR nombre:nombre CER comp:comp DIAA CAR CER {:System.out.println(comp+"   comp"); Componente ar = new Componente((String)nombre,(ArrayList<Componente>)comp);
+                                                               RESULT=ar;:} ;
+archivo ::= ABR ARC nombre:nombre UBI IGU COM PATH:path COM DIAC {:Componente ar = new Componente((String)nombre,null);
+                                                                    ar.setUbicacion(path);
+                                                                    RESULT = ar;:} ;
+nombre::= NOM IGU COM NOMBRE:nombre COM {:RESULT = nombre;:};
+   
