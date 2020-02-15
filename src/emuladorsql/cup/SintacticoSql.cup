@@ -1,0 +1,75 @@
+package emuladorsql.cup;
+import java_cup.runtime.Symbol;
+import java.util.ArrayList;
+ parser code 
+{:
+    
+
+    public void syntax_error(Symbol s){
+        String lexema = s.value.toString();
+        int fila = s.right;
+        int columna = s.left;
+        System.out.println("Error Sintactico Recuperado");
+        System.out.println("\t \tLexema: "+ lexema);
+        System.out.println("\t \tFila: "+ fila);
+        System.out.println("\t \tColumna: "+ columna);
+
+    }
+
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+        String lexema = s.value.toString();
+        int fila = s.right;
+        int columna = s.left;
+        System.out.println("Error Sintactico Panic Mode");
+        System.out.println("\t \tLexema: "+ lexema);
+        System.out.println("\t \tFila: "+ fila);
+        System.out.println("\t \tColumna: "+ columna);
+
+    }
+
+:}
+
+action code
+{:
+:}
+
+    /* Terminals (tokens returned by the scanner). */
+terminal           SELECCIONAR, INSERTAR, ACTUALIZAR,ELIMINAR,EN,FILTRAR, ASIGNAR,VALORES,NOM,PC,PARA,PARC,IGU,COMA,COM,POR,PUNTO,AND,OR,ABRIG,CERIG,DIF,ABR,CER;
+terminal String    NOMBRE,PATH,NUM, ERROR;
+/* Non-terminals */
+non terminal            S,E,columnas,Filtracion,IN,asignacion,columIns,val,valUnico,columnasNom,op,OpLog;
+
+start with S;
+
+
+S::= E PC S {:System.out.println("Fin");:};
+    |E PC
+E::= SELECCIONAR columnas En PATH Filtracion {:System.out.println("Fin");:};
+    | IN
+    |ACTUALIZAR EN PATH ASIGNAR asignacion Filtracion
+    | ELIMINAR EN PATH Filtracion 
+IN::= INSERTAR EN columIns VALORES PARA val PARC {:System.out.println("Fin");:};
+asignacion::=  NOM IGU valUnico COMA asignacion {:System.out.println("Fin");:};
+		|NOM IGU valUnico 
+columIns::= columnasNom
+		| 
+val ::= COM NOMBRE COM COMA val
+	|NUM, val
+	|valUnico
+valUnico ::= COM NOMBRE COM
+		|NUM
+columnas     ::= POR
+		| columnasNom
+columnasNom ::= NOMBRE columnasNom
+			| NOMBRE
+
+Filtracion ::= FILTRAR NOM op valUnico OpLog Filtracion
+		| FILTRAR NOM op valUnico
+OpLog ::= AND
+		| OR
+op ::= IGU,
+        |ABR
+        |CER
+        |ABRIG
+        |CERIG
+        |DIF

@@ -1,0 +1,37 @@
+S->           E;S
+		|E;
+E                     -> SELECCIONAR columnas En path Filtracion 
+			| IN
+                        |ACTUALIZAR EN path ASIGNAR asignacion Filtracion
+			| ELIMINAR EN path Filtracion
+			
+
+IN -> INSERTAR EN columIns VALORES (val)
+
+asignacion-> nom = valUnico,asignacion
+		|nom=valUnico
+columIns-> columnasNom
+		| 
+val -> "nombre", val
+	|numeros, val
+	|valUnico
+valUnico ->"nombre"
+		|numeros
+columnas     -> *
+			| columnasNom
+columnasNom -> nombre columnasNom
+			| nombre
+path = nombre.path
+		|nombre
+Filtracion-> Filtrar nom op valUnico OpLog Filtracion
+		| Filtrar nom op valUnico
+OpLog -> AND
+		| OR
+op ->[=],[<],[>],[<=],[>=][<>]
+nombre        -> Caracter nom
+		    |Caracter
+Caracter ->[A-Z]
+		     |[a-z]
+		     |[0-9]
+		     |  [-], [ _ ],[@], [+], [*], [#], [ . ]
+
