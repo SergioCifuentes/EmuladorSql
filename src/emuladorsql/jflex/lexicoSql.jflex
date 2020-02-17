@@ -10,7 +10,7 @@ import java_cup.runtime.Symbol;
 
 /*Identifiers*/
 Letra = [a-zA-Z]
-Signo = [-_@+*#.]
+Signo = [-_@+*#]
 Numero = [0123456789]
 
 %%//Reglas Lexicas
@@ -25,7 +25,6 @@ Numero = [0123456789]
     "ASIGNAR"                                  {return new Symbol(SimboloSql.ASIGNAR, yycolumn,yyline,yytext());}
     "VALORES"                                  {return new Symbol(SimboloSql.VALORES, yycolumn,yyline,yytext());}
  "nombre"                                  {return new Symbol(SimboloSql.NOM, yycolumn,yyline,yytext());}
-   
     ";"                                  {return new Symbol(SimboloSql.PC, yycolumn,yyline,yytext());}
     "("                                  {return new Symbol(SimboloSql.PARA, yycolumn,yyline,yytext());}
     ")"                                  {return new Symbol(SimboloSql.PARC, yycolumn,yyline,yytext());}
@@ -33,20 +32,19 @@ Numero = [0123456789]
     ","                                  {return new Symbol(SimboloSql.COMA, yycolumn,yyline,yytext());}
     "\""                                         {return new Symbol(SimboloSql.COM, yycolumn,yyline,yytext());}
     "*"                                  {return new Symbol(SimboloSql.POR, yycolumn,yyline,yytext());}
-    "."                                  {return new Symbol(SimboloSql.PUNTO, yycolumn,yyline,yytext());}
+
     "AND"                                  {return new Symbol(SimboloSql.AND, yycolumn,yyline,yytext());}
     "OR"                                  {return new Symbol(SimboloSql.OR, yycolumn,yyline,yytext());}
-
         "<="                                         {return new Symbol(SimboloSql.ABRIG, yycolumn,yyline,yytext());}
         ">="                                         {return new Symbol(SimboloSql.CERIG, yycolumn,yyline,yytext());}
         "<>"                                         {return new Symbol(SimboloSql.DIF, yycolumn,yyline,yytext());}
-
         "<"                                         {return new Symbol(SimboloSql.ABR, yycolumn,yyline,yytext());}
         ">"                                         {return new Symbol(SimboloSql.CER, yycolumn,yyline,yytext());}
-        ({Letra}|{Signo}|{Numero})+                 {return new Symbol(SimboloSql.NOMBRE, yycolumn,yyline,yytext());}
-        ({Numero})+                 {return new Symbol(SimboloSql.NUM, yycolumn,yyline,yytext());}
-        (({Letra}|{Signo}|{Numero}|" ")".")*({Letra}|{Signo}|{Numero}|" ")     {return new Symbol(Simbolos.PATH, yycolumn,yyline,yytext());}
-        [ \t\r\n\f]                            {}
+ ({Numero})+                 {return new Symbol(SimboloSql.NUM, yycolumn,yyline,yytext());}
         
-        .                                            {return new Symbol(Simbolos.ERROR,yycolumn,yyline,yytext());} 
+        ({Letra}|{Signo}|{Numero})+                 {return new Symbol(SimboloSql.NOMBRE, yycolumn,yyline,yytext());}
+       (({Letra}|{Signo}|{Numero})+".")*({Letra}|{Signo}|{Numero})*     {return new Symbol(SimboloSql.PATH, yycolumn,yyline,yytext());}
+        [ \t\r\n\f]                            {}
+       
+        .                                            {return new Symbol(SimboloSql.ERROR,yycolumn,yyline,yytext());} 
 }

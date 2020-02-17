@@ -77,6 +77,7 @@ public class ManejadorIde {
             AnalizadorSintactico as = new AnalizadorSintactico(al);
             try {
                 as.parse();
+                System.out.println(as.resultado+"ssssssssssssss");
                 pr.recibirRaiz(as.resultado);
 
             } catch (Exception ex) {

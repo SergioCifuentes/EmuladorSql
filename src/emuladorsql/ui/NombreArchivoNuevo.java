@@ -14,15 +14,25 @@ import javax.swing.tree.TreeNode;
  * @author sergio
  */
 public class NombreArchivoNuevo extends javax.swing.JDialog {
-private static final String TITULO_NEW_CARPET ="Ingrese el Nombre De su Nueva Carpeta";
-private static final String ERROR_CARPET_EXISTENTE ="Carpeta Ya Existente";
-public  static final int TIPO_CARPETA=1;
-private  boolean ingresado=false;
-    private final String path;
+
+    private static final String TITULO_NEW_CARPET = "Ingrese el Nombre De su Nueva Carpeta";
+    private static final String TITULO_NEW_ARCHIVO = "Ingrese el Nombre De su Nueva Archivo";
+    private static final String ERROR_CARPET_EXISTENTE = "Carpeta Ya Existente";
+    private static final String ERROR_ARCHIVO_EXISTENTE = "Archivo Ya Existente";
+    public static final int TIPO_CARPETA = 1;
+    public static final int TIPO_ARCHIVO = 2;
+    private boolean ingresado = false;
+    private  String path;
     private final TreeNode treeNode;
+    private int tipo;
     private final File idFile;
+    private boolean ruta;
+    private String nombre;
+   
+
     /**
      * Creates new form NombreArchivoNuevo
+     *
      * @param parent
      * @param modal
      * @param tipo
@@ -30,17 +40,22 @@ private  boolean ingresado=false;
      * @param treeNode
      * @param idFile
      */
-    public NombreArchivoNuevo(java.awt.Frame parent, boolean modal,int tipo,String path,TreeNode treeNode,File idFile) {
+    public NombreArchivoNuevo(java.awt.Frame parent, boolean modal, int tipo, String path, TreeNode treeNode, File idFile,boolean ruta) {
         super(parent, modal);
         initComponents();
         lblError.setVisible(false);
-        if (tipo==TIPO_CARPETA) {
-             lblTitulo.setText(TITULO_NEW_CARPET);
-             lblError.setText(ERROR_CARPET_EXISTENTE);
+        this.tipo = tipo;
+        if (tipo == TIPO_CARPETA) {
+            lblTitulo.setText(TITULO_NEW_CARPET);
+            lblError.setText(ERROR_CARPET_EXISTENTE);
+        } else {
+            lblTitulo.setText(TITULO_NEW_ARCHIVO);
+            lblError.setText(ERROR_ARCHIVO_EXISTENTE);
         }
         this.path = path;
         this.treeNode = treeNode;
         this.idFile = idFile;
+        this.ruta=ruta;
     }
 
     /**
@@ -112,19 +127,37 @@ private  boolean ingresado=false;
 
     private void btnSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguienteActionPerformed
         EditadorIde ei = new EditadorIde();
-        if (ei.verificarExistente(path+"/"+txtNombre.getText())) {
-            lblError.setVisible(true);
+        if (tipo == TIPO_CARPETA) {
+            
+            if (ei.verificarExistente(path + "/" + txtNombre.getText())) {
+                lblError.setVisible(true);
+            } else {
+                ei.agregarCarpeta(path + "/" + txtNombre.getText(), treeNode, idFile,ruta);
+                ingresado = true;
+                this.setVisible(false);
+            }
         }else{
-            ei.agregarCarpeta(path+"/"+txtNombre.getText(),treeNode,idFile);
-            ingresado=true;
-            this.setVisible(false);
+            if (ei.verificarExistente(path + "/" + txtNombre.getText())) {
+                lblError.setVisible(true);
+            } else {
+                nombre=txtNombre.getText();
+                path=path + "/" + txtNombre.getText();
+                ingresado = true;
+                this.setVisible(false);
+            }
         }
+
     }//GEN-LAST:event_btnSiguienteActionPerformed
 
+    public String getPath() {
+        return path;
+    }
+public String getNombre(){
+           return nombre;
+}
     /**
      * @param args the command line arguments
      */
-
     public boolean isIngresado() {
         return ingresado;
     }

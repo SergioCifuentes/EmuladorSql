@@ -5,17 +5,20 @@
  */
 package emuladorsql.ui;
 
+import emuladorsql.ManejadorSQL.ManejadorDeEntrada;
 import java.awt.event.MouseAdapter;
 
 import emuladorsql.cup.Componente;
-import emuladorsql.manejadorArchivo.EditadorIde;
-import emuladorsql.manejadorArchivo.ManejadorCsv;
-import emuladorsql.manejadorArchivo.ManejadorIde;
+import emuladorsql.manejadorArchivo.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
@@ -33,14 +36,14 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
     private File file;
     private Componente raiz;
-    private DefaultMutableTreeNode dummie = new DefaultMutableTreeNode("Right Click + Leaf");
-
+    private static final DefaultMutableTreeNode DUMMIE = new DefaultMutableTreeNode("Right Click + Leaf");
+    private String consulta="";
     /**
      * Creates new form PantallaPrincipal
      */
     public PantallaPrincipal() {
         initComponents();
-
+        enterEvent(this);
     }
 
     /**
@@ -54,9 +57,14 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
+        tabs = new javax.swing.JTabbedPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        txtConsultas = new javax.swing.JTextArea();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        txtCampoPrin = new javax.swing.JTextArea();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        txtAreaSql = new javax.swing.JTextArea();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menuNew = new javax.swing.JMenuItem();
@@ -69,12 +77,33 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jScrollPane1.setViewportView(jTree1);
 
-        jTextArea2.setBackground(new java.awt.Color(79, 78, 102));
-        jTextArea2.setColumns(20);
-        jTextArea2.setForeground(new java.awt.Color(254, 254, 254));
-        jTextArea2.setRows(5);
-        jTextArea2.setText(">sql\n");
-        jScrollPane3.setViewportView(jTextArea2);
+        txtConsultas.setEditable(false);
+        txtConsultas.setBackground(new java.awt.Color(79, 78, 102));
+        txtConsultas.setColumns(20);
+        txtConsultas.setFont(new java.awt.Font("Noto Sans CJK TC Thin", 0, 16)); // NOI18N
+        txtConsultas.setForeground(new java.awt.Color(254, 254, 254));
+        txtConsultas.setRows(5);
+        txtConsultas.setText("\n");
+        jScrollPane3.setViewportView(txtConsultas);
+
+        jScrollPane2.setViewportView(jScrollPane3);
+
+        txtCampoPrin.setBackground(new java.awt.Color(79, 78, 102));
+        txtCampoPrin.setColumns(20);
+        txtCampoPrin.setFont(new java.awt.Font("Noto Sans CJK TC Thin", 0, 16)); // NOI18N
+        txtCampoPrin.setForeground(new java.awt.Color(254, 254, 254));
+        txtCampoPrin.setRows(1);
+        txtCampoPrin.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        jScrollPane4.setViewportView(txtCampoPrin);
+
+        txtAreaSql.setEditable(false);
+        txtAreaSql.setBackground(new java.awt.Color(79, 78, 102));
+        txtAreaSql.setColumns(2);
+        txtAreaSql.setFont(new java.awt.Font("Noto Sans CJK TC Thin", 0, 16)); // NOI18N
+        txtAreaSql.setForeground(new java.awt.Color(254, 254, 254));
+        txtAreaSql.setRows(1);
+        txtAreaSql.setText("sql>");
+        jScrollPane5.setViewportView(txtAreaSql);
 
         jMenu1.setText("File");
 
@@ -112,8 +141,12 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 613, Short.MAX_VALUE)
-                    .addComponent(jTabbedPane1))
+                    .addComponent(tabs)
+                    .addComponent(jScrollPane2)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 606, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -121,11 +154,16 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(tabs, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jScrollPane3)))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
+                            .addComponent(jScrollPane4))
+                        .addGap(30, 30, 30)))
                 .addContainerGap())
         );
 
@@ -155,11 +193,20 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
         file = fileChooser.getSelectedFile();
         if (file != null) {
-            ManejadorIde manejadorIde = new ManejadorIde();
-            manejadorIde.abrirProyectoIde(file, this);
+            leerFile();
         }
 
     }//GEN-LAST:event_menuOpenActionPerformed
+
+    public File getFile() {
+        return file;
+    }
+    
+    private void leerFile() {
+
+        ManejadorIde manejadorIde = new ManejadorIde();
+        manejadorIde.abrirProyectoIde(file, this);
+    }
 
     public void recibirRaiz(Componente raiz) {
         this.raiz = raiz;
@@ -175,7 +222,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             }
         } else {
 
-            treeNode1.add(dummie);
+            treeNode1.add(DUMMIE);
         }
 
         jTree1.setModel(new DefaultTreeModel(treeNode1));
@@ -187,14 +234,16 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
         if (com.getComponetes() != null) {
             for (int i = 0; i < com.getComponetes().size(); i++) {
-
+                System.out.println(com.getComponetes().get(i).getNombre() + " " + com.getComponetes().get(i).getComponetes() + " " + com.getComponetes().get(i).getUbicacion());
                 if (com.getComponetes().get(i).getComponetes() != null) {
                     agregarNodo(com.getComponetes().get(i), tN);
                 } else {
                     DefaultMutableTreeNode tN2 = new DefaultMutableTreeNode(com.getComponetes().get(i));
 
                     if (com.getComponetes().get(i).getUbicacion() == null) {
-                        tN2.add(dummie);
+                        System.out.println(com.getComponetes().get(i).getNombre());
+                        DefaultMutableTreeNode dum = new DefaultMutableTreeNode(DUMMIE.getUserObject());
+                        tN2.add(dum);
                     }
                     tN.add(tN2);
                 }
@@ -202,12 +251,26 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             }
         } else {
             if (com.getUbicacion() == null) {
-                tN.add(dummie);
+                DefaultMutableTreeNode dum = new DefaultMutableTreeNode(DUMMIE.getUserObject());
+
+                tN.add(dum);
             }
         }
 
         treeNode.add(tN);
 
+    }
+
+    private void enterEvent(PantallaPrincipal pp) {
+        txtCampoPrin.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    ManejadorDeEntrada mde = new ManejadorDeEntrada();
+                    mde.leerEntrada(txtCampoPrin.getText(), pp);
+                }
+            }
+        });
     }
 
     private void agregarMouseLisener() {
@@ -243,7 +306,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             if (!isSelected) {
                 tree.setSelectionPath(path);
             }
-            if (rightClickedNode != dummie) {
+            if (rightClickedNode != DUMMIE && !rightClickedNode.getUserObject().equals(DUMMIE.getUserObject())) {
                 if (rightClickedNode.isLeaf()) {
                     JPopupMenu popup = new JPopupMenu();
                     final JMenuItem refreshMenuItem = new JMenuItem("Open");
@@ -257,11 +320,12 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 } else {
                     JPopupMenu popup = new JPopupMenu();
                     final JMenuItem refreshMenuItem = new JMenuItem("New File");
-                    refreshMenuItem.addActionListener(ev -> openArchivo(rightClickedNode));
+                    refreshMenuItem.addActionListener(ev -> agregarArchivo(rightClickedNode.getPath(), PantallaPrincipal.this, rightClickedNode.isRoot()));
+
                     popup.add(refreshMenuItem);
 
                     final JMenuItem refreshMenuItem2 = new JMenuItem("New Carpet");
-                    refreshMenuItem2.addActionListener(ev -> agregarCarpeta(rightClickedNode.getPath(), PantallaPrincipal.this));
+                    refreshMenuItem2.addActionListener(ev -> agregarCarpeta(rightClickedNode.getPath(), PantallaPrincipal.this, rightClickedNode.isRoot()));
                     popup.add(refreshMenuItem2);
 
                     final JMenuItem refreshMenuItem3 = new JMenuItem("Delete");
@@ -273,13 +337,15 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
         }
 
-        public void agregarCarpeta(TreeNode[] dmtn, PantallaPrincipal pp) {
+        public void agregarCarpeta(TreeNode[] dmtn, PantallaPrincipal pp, boolean ruta) {
             String sPath = file.getPath();
+            System.out.println(dmtn.length);
             for (int i = 1; i < dmtn.length; i++) {
                 sPath += "/" + dmtn[i];
 
             }
-            NombreArchivoNuevo nan = new NombreArchivoNuevo(pp, rootPaneCheckingEnabled, NombreArchivoNuevo.TIPO_CARPETA, sPath, dmtn[dmtn.length - 1], file);
+
+            NombreArchivoNuevo nan = new NombreArchivoNuevo(PantallaPrincipal.this, rootPaneCheckingEnabled, NombreArchivoNuevo.TIPO_CARPETA, sPath, dmtn[dmtn.length - 1], file, ruta);
             nan.setVisible(true);
             if (nan.isIngresado()) {
 
@@ -288,12 +354,60 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             }
         }
 
+        public void agregarArchivo(TreeNode[] dmtn, PantallaPrincipal pp, boolean raiz) {
+            String sPath = file.getPath();
+            for (int i = 1; i < dmtn.length; i++) {
+                sPath += "/" + dmtn[i];
+
+            }
+            NombreArchivoNuevo nan = new NombreArchivoNuevo(PantallaPrincipal.this, rootPaneCheckingEnabled, NombreArchivoNuevo.TIPO_ARCHIVO, sPath, dmtn[dmtn.length - 1], file, false);
+            nan.setVisible(true);
+
+            if (nan.isIngresado()) {
+                String pathArch = nan.getPath();
+                String nombre = nan.getNombre();
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                fileChooser.showOpenDialog(PantallaPrincipal.this);
+
+                File file1 = fileChooser.getSelectedFile();
+                if (file1 != null) {
+                    if (file1.isFile()) {
+                        if (file1.getPath().endsWith(".csv")) {
+                            EditadorIde ei = new EditadorIde();
+                            ei.agregarArchivo(pathArch, dmtn[dmtn.length - 1], file, file1.getPath(), raiz);
+                            System.out.println("dibujar");
+
+                            leerFile();
+                        } else {
+                            JOptionPane.showMessageDialog(PantallaPrincipal.this, "El Archivo Debe ser .csv", "Error Al Abrir Archivo", JOptionPane.ERROR_MESSAGE);
+                        }
+
+                    } else {
+                        IngresoDeColumnas idc = new IngresoDeColumnas(pp, true);
+                        idc.setVisible(true);
+                        ArrayList<String> nuevasColumnas = idc.getColumnas();
+                        CreadorDeArchivosCsv cdac = new CreadorDeArchivosCsv();
+                        if (cdac.crearCsv(nuevasColumnas, file1.getPath(), nombre)) {
+                            EditadorIde ei = new EditadorIde();
+                            ei.agregarArchivo(pathArch, dmtn[dmtn.length - 1], file, file1.getPath() + "/" + nombre + ".csv", raiz);
+                            leerFile();
+                        }
+                    }
+
+                }
+
+            }
+        }
+
+        @Override
         public void mousePressed(MouseEvent e) {
             if (e.isPopupTrigger()) {
                 myPopupEvent(e);
             }
         }
 
+        @Override
         public void mouseReleased(MouseEvent e) {
             if (e.isPopupTrigger()) {
                 myPopupEvent(e);
@@ -302,24 +416,35 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
         public void openArchivo(DefaultMutableTreeNode dtm) {
             ManejadorCsv cs = new ManejadorCsv();
-            if (cs.agregarArchivo(((Componente) dtm.getUserObject()).getUbicacion(), jTabbedPane1) == false) {
-                JTextArea jtxt = new JTextArea();
-                jTabbedPane1.add(jtxt);
-                jtxt.setText("Error");
+            if (cs.agregarArchivo(((Componente) dtm.getUserObject()), tabs) == false) {
+                JOptionPane.showMessageDialog(PantallaPrincipal.this, "Error Al Abrir Archivo", "Error", JOptionPane.ERROR_MESSAGE);
+
             }
 
         }
+       
     }
+     public void recibirSinPuntoyComa(String sinPC){
+            consulta+=sinPC;
+            txtConsultas.append(sinPC+"\n");
+            txtCampoPrin.setText("");
+            txtAreaSql.setText(">");
+        }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextArea jTextArea2;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTree jTree1;
     private javax.swing.JMenuItem menuNew;
     private javax.swing.JMenuItem menuOpen;
+    private javax.swing.JTabbedPane tabs;
+    private javax.swing.JTextArea txtAreaSql;
+    private javax.swing.JTextArea txtCampoPrin;
+    private javax.swing.JTextArea txtConsultas;
     // End of variables declaration//GEN-END:variables
 }

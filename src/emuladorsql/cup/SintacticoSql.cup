@@ -3,7 +3,8 @@ import java_cup.runtime.Symbol;
 import java.util.ArrayList;
  parser code 
 {:
-    
+    public String sinPuntoyComa; 
+    public ArrayList<Consulta> consultas; 
 
     public void syntax_error(Symbol s){
         String lexema = s.value.toString();
@@ -34,42 +35,93 @@ action code
 :}
 
     /* Terminals (tokens returned by the scanner). */
-terminal           SELECCIONAR, INSERTAR, ACTUALIZAR,ELIMINAR,EN,FILTRAR, ASIGNAR,VALORES,NOM,PC,PARA,PARC,IGU,COMA,COM,POR,PUNTO,AND,OR,ABRIG,CERIG,DIF,ABR,CER;
+terminal           SELECCIONAR, INSERTAR, ACTUALIZAR,ELIMINAR,EN,FILTRAR, ASIGNAR,VALORES,NOM,PC,PARA,PARC,IGU,COMA,COM,POR,PUNTO,AND,OR,ABRIG,CERIG,DIF,ABR,CER,SINPUNTOYCOMA;
 terminal String    NOMBRE,PATH,NUM, ERROR;
 /* Non-terminals */
-non terminal            S,E,columnas,Filtracion,IN,asignacion,columIns,val,valUnico,columnasNom,op,OpLog;
+non terminal            Inicio,S,E,columnas,Filtracion,asignacion,columIns,val,valUnico,columnasNom,op,relacional,OpLog;
 
-start with S;
+start with Inicio;
+Inicio::=S;
+S::= E:e PC S:s {:consultas.add((Consulta)e);:}
+    |E:e PC {:consultas.add((Consulta)e);:};
+    
+E::= SELECCIONAR columnas:col EN PATH:path Filtracion:f {:Select s = new Select((ArrayList<String>)col,(ArrayList<Filtracion>)f,null,(String)path);
+                                                            RESULT=s;:}
+    | INSERTAR EN PATH:path columIns:col VALORES PARA val:valores PARC {:Insertar insertar = new Insertar((ArrayList<String>)col,(ArrayList<String>) valores,null,(String)path);
+                                                                         RESULT =insertar;:}
+
+    |ACTUALIZAR EN PATH:path ASIGNAR asignacion:asig Filtracion:filtracion{:Actualizar actualizar = new Actualizar((ArrayList<String>)asig,(ArrayList<String>)filtracion,null,(String)path);
+                                                                            RESULT= actualizar;:}
+    | ELIMINAR EN PATH:path Filtracion:filtracion {:Eliminar eliminar = new Eliminar((ArrayList<Filtracion>) filtracion,null,(String)path);
+                                    RESULT = eliminar;:} ;
+
+asignacion::=  NOM:NOM IGU valUnico:val COMA asignacion:as {:ArrayList<String> asignaciones = new ArrayList<>();
+                                asignaciones.add(NOM); 
+                                asignaciones.add(val); 
+                                for(int i=0,i<((ArrayList<String>)as).size();i++){
+                                asignaciones.add(((ArrayList<String>)as).get(i))
+                                }
+                                RESULT = asignaciones;:}
+		|NOM:NOM IGU valUnico:val {:ArrayList<String> as = new ArrayList<>();
+                                    as.add(NOM);
+                                    as.add(val)
+                                    RESULT= as;:}; 
+columIns::= columnasNom:col {:RESULT= col;:}
+		| {:RESULT =null;:};
+val ::= COM NOMBRE:NOMBRE COM COMA val:vals {:ArrayList<String> valores = new ArrayList<>();
+                                valores.add(NOMBRE); 
+                                for(int i=0;i<((ArrayList<String>)vals).size();i++){
+                                valores.add(((ArrayList<String>)vals).get(i));
+                                }
+                                RESULT= vals;:}
+	|NUM:NUM COMA val:vals {:ArrayList<String> valores = new ArrayList<>();
+                                valores.add(NUM); 
+                                for(int i=0;i<((ArrayList<String>)vals).size();i++){
+                                valores.add(((ArrayList<String>)vals).get(i))
+                                }
+                                RESULT =vals;:}
+	|valUnico:valUnico {:RESULT= valUnico; :};
+valUnico ::= COM NOMBRE:NOMBRE COM{:ArrayList<String> val = new ArrayList<>();
+                            val.add(NOMBRE);   
+                            RESULT= val;:}
+		|NUM:NUM {:ArrayList<String> val = new ArrayList<>();
+                      val.add(NUM);   
+                      RESULT= val;:};
+columnas     ::= POR:columnas {:RESULT= columnas;:}
+		| columnasNom:colNom {:RESULT =colNom;:};
+columnasNom ::= NOMBRE:nom COMA columnasNom:colNom {:ArrayList<String> columnas = new ArrayList<>();
+                                                    columnas.add(nom);
+                                                    for(int i=0;i<((ArrayList<String>)colNom).size();i++){
+                                                    columnas.add(((ArrayList<String>)colNom).get(i));
+                                                    }
+                                                    RESULT =columnas;:}   
+			| NOMBRE:nom {:ArrayList<String> columnas = new ArrayList<>();
+                                    columnas.add(nom);
+                                    RESULT= columnas;:};
+
+Filtracion ::= FILTRAR  relacional:filtraciones {:ArrayList<Filtracion> fil = new ArrayList<>();
+                                                for(int i=0;i<((ArrayList<Filtracion>)filtraciones).size();i++){
+                                                fil.add(((ArrayList<Filtracion>)filtraciones).get(i));
+                                                RESULT =fil;}:}
+                |  {:RESULT =null;:};                   
+relacional::=NOMBRE:col op:op valUnico:val OpLog:OpLog relacional:rel {:Filtracion f = new Filtracion((String)col,(String)val,Filtracion.operadorAtipo((String)op),(String)OpLog);
+                                                                        ArrayList<Filtracion> filtraciones= new ArrayList<>();
+                                                                        filtraciones.add(f);
+                                                                        for(int i=0;i<((ArrayList<Filtracion>)rel).size();i++){
+                                                                        filtraciones.add(((ArrayList<Filtracion>)rel).get(i));
+                                                                         }
+                                                                         RESULT= filtraciones;:}
 
 
-S::= E PC S {:System.out.println("Fin");:};
-    |E PC
-E::= SELECCIONAR columnas En PATH Filtracion {:System.out.println("Fin");:};
-    | IN
-    |ACTUALIZAR EN PATH ASIGNAR asignacion Filtracion
-    | ELIMINAR EN PATH Filtracion 
-IN::= INSERTAR EN columIns VALORES PARA val PARC {:System.out.println("Fin");:};
-asignacion::=  NOM IGU valUnico COMA asignacion {:System.out.println("Fin");:};
-		|NOM IGU valUnico 
-columIns::= columnasNom
-		| 
-val ::= COM NOMBRE COM COMA val
-	|NUM, val
-	|valUnico
-valUnico ::= COM NOMBRE COM
-		|NUM
-columnas     ::= POR
-		| columnasNom
-columnasNom ::= NOMBRE columnasNom
-			| NOMBRE
-
-Filtracion ::= FILTRAR NOM op valUnico OpLog Filtracion
-		| FILTRAR NOM op valUnico
-OpLog ::= AND
-		| OR
-op ::= IGU,
-        |ABR
-        |CER
-        |ABRIG
-        |CERIG
-        |DIF
+            |NOMBRE:col op:op valUnico:val {:Filtracion f = new Filtracion((String)col,((ArrayList<String>)val).get(0),Filtracion.operadorAtipo((String)op),null);
+                                            ArrayList<Filtracion> fs = new ArrayList<>();
+                                            fs.add(f);
+                                            RESULT= fs;:};
+OpLog ::= AND:OpLog {:RESULT =OpLog;:}
+		| OR:OpLog {:RESULT = OpLog;:};
+op ::= IGU:op {:RESULT= op;:}
+        |ABR:op {:RESULT= op;:}
+        |CER:op {:RESULT =op;:}
+        |ABRIG:op {:RESULT =op;:}
+        |CERIG:op {:RESULT =op;:}
+        |DIF:op {:RESULT =op;:};
