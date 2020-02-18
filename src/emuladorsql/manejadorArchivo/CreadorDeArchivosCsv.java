@@ -34,7 +34,6 @@ public class CreadorDeArchivosCsv {
                     }
                     
                 }
-                System.out.println(texto);
                 fw.write(texto);
                 fw.close();
             } catch (IOException ex) {

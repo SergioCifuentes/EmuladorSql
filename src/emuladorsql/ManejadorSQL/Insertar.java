@@ -28,6 +28,7 @@ public class Insertar extends Consulta {
     public void insertar(File file, PantallaPrincipal pp) {
         ManejadorErrores me = new ManejadorErrores();
         String pathArchivo = me.conseguirPathArchivo(path, file);
+        
         if (me.verificarPath(pathArchivo)) {
             ManejadorCsv mc = new ManejadorCsv();
             ArrayList<String[]> tabla = mc.conseguirTabla(mc.conseguirPathCsv(pathArchivo));
@@ -40,7 +41,6 @@ public class Insertar extends Consulta {
                     errorColumna = true;
                     pp.escribirLinea(errorColumnas);
                 }
-                System.out.println("columnas " + columnas.size());
                 errorColumnas = me.verificarLongitud(tabla, columnas);
                 if (errorColumnas != null) {
                     errorColumna = true;
@@ -48,7 +48,6 @@ public class Insertar extends Consulta {
                 }
             }
             if (errorColumna == false) {
-                System.out.println("valores " + valores.size());
                 String errorValores = me.verificarLongitud(tabla, valores);
                 if (errorValores != null) {
                     pp.escribirLinea(errorValores);

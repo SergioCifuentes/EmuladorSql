@@ -55,16 +55,16 @@ E::= SELECCIONAR columnas:col EN PATH:path Filtracion:f {:Select s = new Select(
     | ELIMINAR EN PATH:path Filtracion:filtracion {:Eliminar eliminar = new Eliminar((ArrayList<Filtracion>) filtracion,null,(String)path);
                                     RESULT = eliminar;:} ;
 
-asignacion::=  NOM:NOM IGU valUnico:val COMA asignacion:as {:ArrayList<String> asignaciones = new ArrayList<>();
+asignacion::=  NOMBRE:NOM IGU valUnico:val COMA asignacion:as {:ArrayList<String> asignaciones = new ArrayList<>();
                                 asignaciones.add(NOM); 
                                 asignaciones.add(val); 
                                 for(int i=0,i<((ArrayList<String>)as).size();i++){
-                                asignaciones.add(((ArrayList<String>)as).get(i))
+                                asignaciones.add(((ArrayList<String>)as).get(i));
                                 }
                                 RESULT = asignaciones;:}
-		|NOM:NOM IGU valUnico:val {:ArrayList<String> as = new ArrayList<>();
-                                    as.add(NOM);
-                                    as.add(val)
+		|NOMBRE:NOM IGU valUnico:val {:ArrayList<String> as = new ArrayList<>();
+                                    as.add((String)NOM);
+                                    as.add((String)val);
                                     RESULT= as;:}; 
 columIns::= PARA columnasNom:col PARC {:RESULT= col;:}
 		| {:RESULT =null;:};
@@ -87,7 +87,7 @@ valUnico ::= COM NOMBRE:NOMBRE COM{:ArrayList<String> val = new ArrayList<>();
 		|NUM:NUM {:ArrayList<String> val = new ArrayList<>();
                       val.add(NUM);   
                       RESULT= val;:};
-columnas     ::= POR:columnas {:RESULT= columnas;:}
+columnas     ::= POR:columnas {:RESULT= null;:}
 		| columnasNom:colNom {:RESULT =colNom;:};
 columnasNom ::= NOMBRE:nom COMA columnasNom:colNom {:ArrayList<String> columnas = new ArrayList<>();
                                                     columnas.add(nom);

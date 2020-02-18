@@ -54,8 +54,8 @@ public class Filtracion {
            case "<>":
                return 5;
                
-           case "==":
-               return 5;
+           case "=":
+               return 6;
                default:
                    return 0;
        }

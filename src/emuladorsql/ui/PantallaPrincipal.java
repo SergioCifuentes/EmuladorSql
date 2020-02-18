@@ -275,8 +275,13 @@ public void escribirLinea(String linea){
             @Override
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    
+                    txtConsultas.append(txtCampoPrin.getText());
+                    String aux = txtCampoPrin.getText();
+                    txtCampoPrin.setText("");
+                    
                     ManejadorDeEntrada mde = new ManejadorDeEntrada();
-                    mde.leerEntrada(txtCampoPrin.getText(), pp);
+                    mde.leerEntrada(aux, pp);
                 }
             }
         });

@@ -33,7 +33,7 @@ public class Select extends Consulta {
             ArrayList<String[]> tabla = mc.conseguirTabla(mc.conseguirPathCsv(pathArchivo));
             String errorColumnas = null;
             if (columnas != null) {
-                me.verificarColumnas(tabla, columnas);
+                
                 errorColumnas = me.verificarColumnas(tabla, columnas);
 
             }
@@ -43,15 +43,16 @@ public class Select extends Consulta {
             } else {
                 String auxColumnas = null;
                 if (filtraciones != null) {
+                    ArrayList<String> a= new ArrayList<>();
                     for (int i = 0; i < filtraciones.size(); i++) {
 
-                        ArrayList<String> a = new ArrayList<>();
                         a.add(filtraciones.get(i).getColumna());
-                        auxColumnas = me.verificarColumnas(tabla, a);
+                        
+                    }
+                    auxColumnas = me.verificarColumnas(tabla, a);
                         if (auxColumnas != null) {
                             pp.escribirLinea(auxColumnas);
                         }
-                    }
                 }
                 if (auxColumnas == null) {
 

@@ -37,8 +37,10 @@ public class ManejadorDeEntrada {
                             insertar.insertar(pp.getFile(), pp);
                     }else if(ass.consultas.get(i).getClass()==Actualizar.class){
                         Actualizar actualizar = (Actualizar)ass.consultas.get(i);
+                        actualizar.actualizar(pp.getFile(), pp);
                     }else if(ass.consultas.get(i).getClass()==Eliminar.class){
                         Eliminar eliminar = (Eliminar)ass.consultas.get(i);
+                        eliminar.eliminar(pp.getFile(), pp);
                     }
                 }
             }
