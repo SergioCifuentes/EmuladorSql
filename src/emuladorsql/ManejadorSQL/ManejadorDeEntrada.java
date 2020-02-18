@@ -29,11 +29,12 @@ public class ManejadorDeEntrada {
                     System.out.println(ass.consultas.get(i).getPath());
                     if (ass.consultas.get(i).getClass()==Select.class) {
                         Select select = (Select)ass.consultas.get(i);
-                        select.select(pp.getFile());
+                        select.select(pp.getFile(),pp);
                         
                         
                     }else if(ass.consultas.get(i).getClass()==Insertar.class){
                         Insertar insertar = (Insertar)ass.consultas.get(i);
+                            insertar.insertar(pp.getFile(), pp);
                     }else if(ass.consultas.get(i).getClass()==Actualizar.class){
                         Actualizar actualizar = (Actualizar)ass.consultas.get(i);
                     }else if(ass.consultas.get(i).getClass()==Eliminar.class){

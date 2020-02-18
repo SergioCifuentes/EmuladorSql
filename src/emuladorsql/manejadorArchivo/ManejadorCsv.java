@@ -7,9 +7,11 @@ package emuladorsql.manejadorArchivo;
 
 import emuladorsql.cup.Componente;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -121,5 +123,42 @@ public String conseguirPathCsv(String pathArchivo){
             Logger.getLogger(ManejadorCsv.class.getName()).log(Level.SEVERE, null, ex);
         }
     return null;
+}
+
+public void insertarFila(String[] fila,String path){
+    File file = new File(conseguirPathCsv(path));
+    FileWriter fw=null;
+    BufferedWriter bw=null;
+        try {
+            fw = new FileWriter(file,true);
+             bw= new BufferedWriter(fw);
+            
+            String filaAux="";
+            for (int i = 0; i <fila.length; i++) {
+                if (i==0) {
+                    filaAux+=fila[i];
+                }else{
+                    filaAux+=","+fila[i];
+                }
+            }
+            bw.write("\n"+filaAux);
+            
+        } catch (IOException ex) {
+            Logger.getLogger(ManejadorCsv.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            if (bw != null)
+                try {
+                    bw.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ManejadorCsv.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if (fw != null)
+                try {
+                    fw.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ManejadorCsv.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    
 }
 }

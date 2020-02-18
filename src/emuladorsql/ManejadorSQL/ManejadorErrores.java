@@ -55,4 +55,11 @@ public class ManejadorErrores {
         return error;
         
     }
+    public String verificarLongitud(ArrayList<String[]> tabla, ArrayList<String> columnas){
+        if (tabla.get(0).length==columnas.size()) {
+            return null;
+        }else{
+            return "Error en Longitud";
+        }
+    }
 }

@@ -38,6 +38,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private Componente raiz;
     private static final DefaultMutableTreeNode DUMMIE = new DefaultMutableTreeNode("Right Click + Leaf");
     private String consulta="";
+    private ArrayList<DefaultMutableTreeNode> tabsAbiertos= new ArrayList<>();
     /**
      * Creates new form PantallaPrincipal
      */
@@ -197,11 +198,19 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_menuOpenActionPerformed
-
+public void escribirLinea(String linea){
+    txtConsultas.append(linea+"\n");
+}
     public File getFile() {
         return file;
     }
-    
+    public void actaulizarTabs(){
+        tabs.removeAll();
+        ManejadorCsv mc = new ManejadorCsv();
+        for (int i = 0; i < tabsAbiertos.size(); i++) {
+            mc.agregarArchivo(((Componente) tabsAbiertos.get(i).getUserObject()), tabs);
+        }
+    }
     private void leerFile() {
 
         ManejadorIde manejadorIde = new ManejadorIde();
@@ -310,7 +319,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 if (rightClickedNode.isLeaf()) {
                     JPopupMenu popup = new JPopupMenu();
                     final JMenuItem refreshMenuItem = new JMenuItem("Open");
-                    refreshMenuItem.addActionListener(ev -> openArchivo(rightClickedNode));
+                    refreshMenuItem.addActionListener(ev -> openArchivo(rightClickedNode,tabsAbiertos));
                     popup.add(refreshMenuItem);
 
                     final JMenuItem refreshMenuItem2 = new JMenuItem("Delete");
@@ -376,8 +385,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                         if (file1.getPath().endsWith(".csv")) {
                             EditadorIde ei = new EditadorIde();
                             ei.agregarArchivo(pathArch, dmtn[dmtn.length - 1], file, file1.getPath(), raiz);
-                            System.out.println("dibujar");
-
+                            
                             leerFile();
                         } else {
                             JOptionPane.showMessageDialog(PantallaPrincipal.this, "El Archivo Debe ser .csv", "Error Al Abrir Archivo", JOptionPane.ERROR_MESSAGE);
@@ -414,11 +422,13 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             }
         }
 
-        public void openArchivo(DefaultMutableTreeNode dtm) {
+        public void openArchivo(DefaultMutableTreeNode dtm,ArrayList<DefaultMutableTreeNode> tabsAbiertos) {
             ManejadorCsv cs = new ManejadorCsv();
             if (cs.agregarArchivo(((Componente) dtm.getUserObject()), tabs) == false) {
                 JOptionPane.showMessageDialog(PantallaPrincipal.this, "Error Al Abrir Archivo", "Error", JOptionPane.ERROR_MESSAGE);
 
+            }else{
+                tabsAbiertos.add(dtm);
             }
 
         }

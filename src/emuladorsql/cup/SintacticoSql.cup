@@ -66,20 +66,20 @@ asignacion::=  NOM:NOM IGU valUnico:val COMA asignacion:as {:ArrayList<String> a
                                     as.add(NOM);
                                     as.add(val)
                                     RESULT= as;:}; 
-columIns::= columnasNom:col {:RESULT= col;:}
+columIns::= PARA columnasNom:col PARC {:RESULT= col;:}
 		| {:RESULT =null;:};
 val ::= COM NOMBRE:NOMBRE COM COMA val:vals {:ArrayList<String> valores = new ArrayList<>();
-                                valores.add(NOMBRE); 
+                                valores.add((String)NOMBRE); 
                                 for(int i=0;i<((ArrayList<String>)vals).size();i++){
                                 valores.add(((ArrayList<String>)vals).get(i));
                                 }
-                                RESULT= vals;:}
+                                RESULT= valores;:}
 	|NUM:NUM COMA val:vals {:ArrayList<String> valores = new ArrayList<>();
-                                valores.add(NUM); 
+                                valores.add((String)NUM); 
                                 for(int i=0;i<((ArrayList<String>)vals).size();i++){
-                                valores.add(((ArrayList<String>)vals).get(i))
+                                valores.add(((ArrayList<String>)vals).get(i));
                                 }
-                                RESULT =vals;:}
+                                RESULT =valores;:}
 	|valUnico:valUnico {:RESULT= valUnico; :};
 valUnico ::= COM NOMBRE:NOMBRE COM{:ArrayList<String> val = new ArrayList<>();
                             val.add(NOMBRE);   
