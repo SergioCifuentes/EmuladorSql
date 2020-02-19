@@ -5,7 +5,7 @@
  */
 package emuladorsql.ManejadorSQL;
 
-import emuladorsql.manejadorArchivo.ManejadorCsv;
+import emuladorsql.jflex.Secundario.ManejadorCsv;
 import emuladorsql.ui.PantallaPrincipal;
 import java.io.File;
 import java.util.ArrayList;

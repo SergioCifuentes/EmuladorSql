@@ -1,0 +1,28 @@
+package emuladorsql.cup.Secundario;
+import java_cup.runtime.Symbol;
+ parser code 
+{:
+    public boolean correcto; 
+
+    public void syntax_error(Symbol s){
+        correcto=false;
+
+    }
+
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+        correcto=false;
+
+    }
+
+:}
+
+
+terminal    TODO,PYC;
+non terminal Inicio,ID;
+
+start with Inicio;
+Inicio ::= ID PYC Inicio {:correcto=true:}
+        | ID PYC {:correcto=true:}
+        |PYC {:correcto=true:};
+ID::= TODO ID
+    |TODO;

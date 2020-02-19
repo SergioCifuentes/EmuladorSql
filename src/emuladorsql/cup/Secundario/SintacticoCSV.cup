@@ -1,0 +1,63 @@
+package emuladorsql.cup.Secundario;
+import java_cup.runtime.Symbol;
+import java.util.ArrayList;
+ parser code 
+{:
+    public ArrayList<String[]> filas= new ArrayList<>(); 
+    public String mensajeError=null;
+
+    public void syntax_error(Symbol s){
+         String lexema = s.value.toString();
+        int fila = s.right;
+        int columna = s.left;
+        System.out.println("Error Sintactico Recuperado");
+        System.out.println("\t \tLexema: "+ lexema);
+        System.out.println("\t \tFila: "+ fila);
+        System.out.println("\t \tColumna: "+ columna);
+
+    }
+
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+         String lexema = s.value.toString();
+        int fila = s.right;
+        int columna = s.left;
+        System.out.println("Error Sintactico Recuperado");
+        System.out.println("\t \tLexema: "+ lexema);
+        System.out.println("\t \tFila: "+ fila);
+        System.out.println("\t \tColumna: "+ columna);
+
+    }
+
+:}
+
+
+terminal    TODO,COMA,ENTER;
+non terminal Inicio,S,Con,ID;
+
+start with Inicio;
+Inicio::=S:s                {:filas=(ArrayList<String[]>)s;:};
+        
+S::= Con:Con ENTER S:S  {:ArrayList<String[]> fil = new ArrayList<>();
+                            fil.add((String[])Con);
+                            for(int i=0;i<((ArrayList<String[]>)S).size();i++){
+                        fil.add(((ArrayList<String[]>)S).get(i));
+                        }
+                            RESULT =fil;:}
+        | Con:Con        {:ArrayList<String[]> fil = new ArrayList<>();
+                            fil.add((String[])Con);
+                            RESULT =fil; :}              
+        |ENTER;
+Con::=ID:ID COMA Con:Con   {:String[] id = new String[((String[])Con).length+1];
+                        id[0]=(String)ID;
+                        for(int i=1;i<id.length;i++){
+                        id[i]=((String[])Con)[i-1];
+                        }
+                        RESULT=id;:}
+    |ID:ID                 {:String[] id = new String[1];
+                        id[0]=(String)ID;
+                        RESULT=id;:};
+ID::= TODO:TODO ID:ID           {:String todo = new String();
+                        todo=(String)TODO;
+                        todo+=(String)ID;
+                        RESULT =todo;:}
+    |TODO:TODO               {:RESULT= TODO;:};

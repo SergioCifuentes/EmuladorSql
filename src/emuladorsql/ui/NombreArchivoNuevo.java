@@ -77,7 +77,7 @@ public class NombreArchivoNuevo extends javax.swing.JDialog {
         lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblTitulo.setText("jLabel1");
 
-        txtNombre.setText("jTextField1");
+        txtNombre.setText(" ");
 
         lblError.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
         lblError.setForeground(new java.awt.Color(255, 0, 0));

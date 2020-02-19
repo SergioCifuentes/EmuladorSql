@@ -5,6 +5,8 @@
  */
 package emuladorsql.ui;
 
+import emuladorsql.jflex.Secundario.ManejadorCsv;
+import emuladorsql.jflex.Secundario.verificarPyC;
 import emuladorsql.ManejadorSQL.ManejadorDeEntrada;
 import java.awt.event.MouseAdapter;
 
@@ -15,12 +17,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import javax.swing.JTextArea;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -37,14 +37,18 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private File file;
     private Componente raiz;
     private static final DefaultMutableTreeNode DUMMIE = new DefaultMutableTreeNode("Right Click + Leaf");
-    private String consulta="";
-    private ArrayList<DefaultMutableTreeNode> tabsAbiertos= new ArrayList<>();
+    private String consulta = "";
+    private ArrayList<DefaultMutableTreeNode> tabsAbiertos = new ArrayList<>();
+    private String consultaAnterior = null;
+
     /**
      * Creates new form PantallaPrincipal
      */
     public PantallaPrincipal() {
         initComponents();
         enterEvent(this);
+        upEvent(this);
+        txtCampoPrin.setEditable(false);
     }
 
     /**
@@ -194,23 +198,33 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
         file = fileChooser.getSelectedFile();
         if (file != null) {
+
             leerFile();
+            txtCampoPrin.setEditable(true);
         }
 
     }//GEN-LAST:event_menuOpenActionPerformed
-public void escribirLinea(String linea){
-    txtConsultas.append(linea+"\n");
-}
+    public void escribirLinea(String linea) {
+        txtConsultas.append(linea + "\n");
+    }
+
     public File getFile() {
         return file;
     }
-    public void actaulizarTabs(){
+
+    protected void borrarArbol() {
+        jTree1.removeAll();
+        jTree1.setModel(new DefaultTreeModel(new DefaultMutableTreeNode("Crtl+O open")));
+    }
+
+    public void actaulizarTabs() {
         tabs.removeAll();
         ManejadorCsv mc = new ManejadorCsv();
         for (int i = 0; i < tabsAbiertos.size(); i++) {
             mc.agregarArchivo(((Componente) tabsAbiertos.get(i).getUserObject()), tabs);
         }
     }
+
     private void leerFile() {
 
         ManejadorIde manejadorIde = new ManejadorIde();
@@ -250,7 +264,6 @@ public void escribirLinea(String linea){
                     DefaultMutableTreeNode tN2 = new DefaultMutableTreeNode(com.getComponetes().get(i));
 
                     if (com.getComponetes().get(i).getUbicacion() == null) {
-                        System.out.println(com.getComponetes().get(i).getNombre());
                         DefaultMutableTreeNode dum = new DefaultMutableTreeNode(DUMMIE.getUserObject());
                         tN2.add(dum);
                     }
@@ -275,13 +288,43 @@ public void escribirLinea(String linea){
             @Override
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    if (consulta==null||"".equals(consulta)) {
+                        txtConsultas.append("sql>"+txtCampoPrin.getText());
+                    }else{
+                        txtConsultas.append("    >"+txtCampoPrin.getText());
+                    }
                     
-                    txtConsultas.append(txtCampoPrin.getText());
                     String aux = txtCampoPrin.getText();
+                    consultaAnterior = aux;
                     txtCampoPrin.setText("");
-                    
-                    ManejadorDeEntrada mde = new ManejadorDeEntrada();
-                    mde.leerEntrada(aux, pp);
+
+                    verificarPyC vPyC = new verificarPyC();
+                    if (vPyC.verificarPuntoyComa(aux)) {
+                        aux = consulta + aux;
+                        consulta = "";
+                        txtAreaSql.setText("sql>");
+                        
+                        ManejadorDeEntrada mde = new ManejadorDeEntrada();
+                        mde.leerEntrada(aux.replace("\n", " "), pp);
+                    } else {
+                        consulta += aux;
+                        txtAreaSql.setText("    >");
+                    }
+
+                }
+            }
+        });
+    }
+
+    private void upEvent(PantallaPrincipal pp) {
+        txtCampoPrin.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_UP) {
+
+                    if (consultaAnterior != null) {
+                        txtCampoPrin.setText(consultaAnterior);
+                    }
                 }
             }
         });
@@ -324,11 +367,11 @@ public void escribirLinea(String linea){
                 if (rightClickedNode.isLeaf()) {
                     JPopupMenu popup = new JPopupMenu();
                     final JMenuItem refreshMenuItem = new JMenuItem("Open");
-                    refreshMenuItem.addActionListener(ev -> openArchivo(rightClickedNode,tabsAbiertos));
+                    refreshMenuItem.addActionListener(ev -> openArchivo(rightClickedNode, tabsAbiertos));
                     popup.add(refreshMenuItem);
 
                     final JMenuItem refreshMenuItem2 = new JMenuItem("Delete");
-                    refreshMenuItem2.addActionListener(ev -> System.out.println("Delete!"));
+                    refreshMenuItem2.addActionListener(ev -> borrarCarpeta(rightClickedNode.getPath(), PantallaPrincipal.this));
                     popup.add(refreshMenuItem2);
                     popup.show(tree, x, y);
                 } else {
@@ -342,13 +385,26 @@ public void escribirLinea(String linea){
                     refreshMenuItem2.addActionListener(ev -> agregarCarpeta(rightClickedNode.getPath(), PantallaPrincipal.this, rightClickedNode.isRoot()));
                     popup.add(refreshMenuItem2);
 
-                    final JMenuItem refreshMenuItem3 = new JMenuItem("Delete");
-                    refreshMenuItem3.addActionListener(ev -> System.out.println("Delete!"));
-                    popup.add(refreshMenuItem3);
-                    popup.show(tree, x, y);
+                    if (rightClickedNode.isRoot()) {
+                        final JMenuItem refreshMenuItem3 = new JMenuItem("Close");
+                        refreshMenuItem3.addActionListener(ev -> cerrarProyecto());
+                        popup.add(refreshMenuItem3);
+                        popup.show(tree, x, y);
+                    } else {
+                        final JMenuItem refreshMenuItem3 = new JMenuItem("Delete");
+                        refreshMenuItem3.addActionListener(ev -> borrarCarpeta(rightClickedNode.getPath(), PantallaPrincipal.this));
+                        popup.add(refreshMenuItem3);
+                        popup.show(tree, x, y);
+                    }
                 }
+
             }
 
+        }
+
+        public void cerrarProyecto() {
+            file = null;
+            PantallaPrincipal.this.borrarArbol();
         }
 
         public void agregarCarpeta(TreeNode[] dmtn, PantallaPrincipal pp, boolean ruta) {
@@ -356,15 +412,27 @@ public void escribirLinea(String linea){
             System.out.println(dmtn.length);
             for (int i = 1; i < dmtn.length; i++) {
                 sPath += "/" + dmtn[i];
-
             }
-
             NombreArchivoNuevo nan = new NombreArchivoNuevo(PantallaPrincipal.this, rootPaneCheckingEnabled, NombreArchivoNuevo.TIPO_CARPETA, sPath, dmtn[dmtn.length - 1], file, ruta);
             nan.setVisible(true);
             if (nan.isIngresado()) {
 
                 ManejadorIde manejadorIde = new ManejadorIde();
                 manejadorIde.abrirProyectoIde(file, pp);
+            }
+        }
+
+        public void borrarCarpeta(TreeNode[] dmtn, PantallaPrincipal pp) {
+            if (dmtn[dmtn.length - 1].isLeaf()) {
+                ConfirmacionDeEliminacion cde = new ConfirmacionDeEliminacion(pp, rootPaneCheckingEnabled, dmtn[dmtn.length - 1].toString());
+                cde.setVisible(true);
+                if (cde.isConfirmancion()) {
+                    new EditadorIde().borrarCarpeta(file, dmtn, pp);
+                    leerFile();
+                }
+            } else {
+                new EditadorIde().borrarCarpeta(file, dmtn, pp);
+                leerFile();
             }
         }
 
@@ -390,7 +458,7 @@ public void escribirLinea(String linea){
                         if (file1.getPath().endsWith(".csv")) {
                             EditadorIde ei = new EditadorIde();
                             ei.agregarArchivo(pathArch, dmtn[dmtn.length - 1], file, file1.getPath(), raiz);
-                            
+
                             leerFile();
                         } else {
                             JOptionPane.showMessageDialog(PantallaPrincipal.this, "El Archivo Debe ser .csv", "Error Al Abrir Archivo", JOptionPane.ERROR_MESSAGE);
@@ -427,24 +495,25 @@ public void escribirLinea(String linea){
             }
         }
 
-        public void openArchivo(DefaultMutableTreeNode dtm,ArrayList<DefaultMutableTreeNode> tabsAbiertos) {
+        public void openArchivo(DefaultMutableTreeNode dtm, ArrayList<DefaultMutableTreeNode> tabsAbiertos) {
             ManejadorCsv cs = new ManejadorCsv();
             if (cs.agregarArchivo(((Componente) dtm.getUserObject()), tabs) == false) {
                 JOptionPane.showMessageDialog(PantallaPrincipal.this, "Error Al Abrir Archivo", "Error", JOptionPane.ERROR_MESSAGE);
 
-            }else{
+            } else {
                 tabsAbiertos.add(dtm);
             }
 
         }
-       
+
     }
-     public void recibirSinPuntoyComa(String sinPC){
-            consulta+=sinPC;
-            txtConsultas.append(sinPC+"\n");
-            txtCampoPrin.setText("");
-            txtAreaSql.setText(">");
-        }
+
+    public void recibirSinPuntoyComa(String sinPC) {
+        consulta += sinPC;
+        txtConsultas.append(sinPC + "\n");
+        txtCampoPrin.setText("");
+        txtAreaSql.setText(">");
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;

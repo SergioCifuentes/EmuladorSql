@@ -8,9 +8,12 @@
             <file>file:/home/sergio/Clases2020/Org.%20Lenguajes%20y%20Compiladores1/Proyectos/EmuladorSql/src/emuladorsql/ManejadorSQL/Filtracion.java</file>
             <file>file:/home/sergio/Clases2020/Org.%20Lenguajes%20y%20Compiladores1/Proyectos/EmuladorSql/src/emuladorsql/ManejadorSQL/Select.java</file>
             <file>file:/home/sergio/Clases2020/Org.%20Lenguajes%20y%20Compiladores1/Proyectos/EmuladorSql/src/emuladorsql/ui/NombreArchivoNuevo.java</file>
+            <file>file:/home/sergio/Clases2020/Org.%20Lenguajes%20y%20Compiladores1/Proyectos/EmuladorSql/src/emuladorsql/ui/verificarPyC.java</file>
             <file>file:/home/sergio/Clases2020/Org.%20Lenguajes%20y%20Compiladores1/Proyectos/EmuladorSql/src/emuladorsql/ManejadorSQL/Consulta.java</file>
             <file>file:/home/sergio/Clases2020/Org.%20Lenguajes%20y%20Compiladores1/Proyectos/EmuladorSql/src/emuladorsql/jflex/lexicoSql.jflex</file>
             <file>file:/home/sergio/Clases2020/Org.%20Lenguajes%20y%20Compiladores1/Proyectos/EmuladorSql/src/emuladorsql/ManejadorSQL/AnalizadorLexicoSql.java</file>
+            <file>file:/home/sergio/Clases2020/Org.%20Lenguajes%20y%20Compiladores1/Proyectos/EmuladorSql/src/emuladorsql/jflex/SimboloSql.java</file>
+            <file>file:/home/sergio/Clases2020/Org.%20Lenguajes%20y%20Compiladores1/Proyectos/EmuladorSql/src/emuladorsql/ManejadorSQL/ManejadorDeFiltraciones.java</file>
             <file>file:/home/sergio/Clases2020/Org.%20Lenguajes%20y%20Compiladores1/Proyectos/EmuladorSql/src/emuladorsql/ManejadorSQL/ManejadorDeEntrada.java</file>
             <file>file:/home/sergio/Clases2020/Org.%20Lenguajes%20y%20Compiladores1/Proyectos/EmuladorSql/src/emuladorsql/ManejadorSQL/Insertar.java</file>
             <file>file:/home/sergio/Clases2020/Org.%20Lenguajes%20y%20Compiladores1/Proyectos/EmuladorSql/src/emuladorsql/manejadorArchivo/ManejadorCsv.java</file>

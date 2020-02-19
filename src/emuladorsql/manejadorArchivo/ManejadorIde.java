@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -50,7 +51,7 @@ public class ManejadorIde {
 
     }
 
-    public void abrirProyectoIde(File proyecto, PantallaPrincipal pr) {
+    public void  abrirProyectoIde(File proyecto, PantallaPrincipal pr) {
         String textoArchivo = "";
         BufferedReader br = null;
         if (proyecto.getPath().endsWith(".ide")) {
@@ -67,13 +68,7 @@ public class ManejadorIde {
                         break;
                     }
                 }
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(ManejadorIde.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(ManejadorIde.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            AnalizadorLexico al = new AnalizadorLexico(new BufferedReader(new StringReader(textoArchivo)));
+                 AnalizadorLexico al = new AnalizadorLexico(new BufferedReader(new StringReader(textoArchivo)));
             AnalizadorSintactico as = new AnalizadorSintactico(al);
             try {
                 as.parse();
@@ -83,11 +78,21 @@ public class ManejadorIde {
             } catch (Exception ex) {
                 Logger.getLogger(ManejadorIde.class.getName()).log(Level.SEVERE, null, ex);
             }
+            } catch (FileNotFoundException ex) {
+                JOptionPane.showMessageDialog(pr,"Este Archivo no tiene .ide","Error Al Abrir",JOptionPane.ERROR_MESSAGE);
+            } catch (IOException ex) {
+                Logger.getLogger(ManejadorIde.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+           
 
         }
         try {
-            br.close();
-        } catch (IOException ex) {
+            if (br!=null) {
+                 br.close();
+            }
+           
+        } catch (IOException | NullPointerException ex) {
             Logger.getLogger(ManejadorIde.class.getName()).log(Level.SEVERE, null, ex);
         }
 

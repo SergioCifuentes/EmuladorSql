@@ -24,7 +24,7 @@ public class ManejadorDeEntrada {
             if (ass.consultas==null) {
                pp.recibirSinPuntoyComa(ass.sinPuntoyComa);
             }else{
-                for (int i = 0; i < ass.consultas.size(); i++) {
+                for (int i = ass.consultas.size()-1; i > -1; i--) {
                     System.out.println(ass.consultas.get(i).getConsulta());
                     System.out.println(ass.consultas.get(i).getPath());
                     if (ass.consultas.get(i).getClass()==Select.class) {

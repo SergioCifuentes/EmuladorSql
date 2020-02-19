@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package emuladorsql.manejadorArchivo;
+package emuladorsql.jflex.Secundario;
 
 import emuladorsql.cup.Componente;
+import emuladorsql.cup.Secundario.AnalizadorSintacticoCSV;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,6 +15,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,81 +32,104 @@ import javax.swing.table.DefaultTableModel;
 public class ManejadorCsv {
 
     public boolean agregarArchivo(Componente com, JTabbedPane tabbedPaneUI) {
-        File file = new File(com.getUbicacion());
+
+        ArrayList<String[]> filas = conseguirTabla(com.getUbicacion());
         JTable tabla = new JTable();
         DefaultTableModel model = (DefaultTableModel) tabla.getModel();
-
-        if (file.exists()) {
-
-            String textoArchivo = "";
-            BufferedReader br = null;
-            String columnas = "";
-            try {
-                br = new BufferedReader(new FileReader(file));
-                columnas = br.readLine();
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(ManejadorCsv.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(ManejadorCsv.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            String[] s = columnas.split(",");
-            model.setColumnCount(s.length);
-            model.setColumnIdentifiers(s);
-
-            while (true) {
-                try {
-                    textoArchivo = "";
-                    textoArchivo += br.readLine();
-                } catch (IOException ex) {
-                    Logger.getLogger(ManejadorCsv.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                if (textoArchivo.endsWith("null")) {
-                    textoArchivo = textoArchivo.replace("null", "");
-                    break;
-                } else {
-                    String[] fila = textoArchivo.split(",");
-                    model.addRow(fila);
-
-                }
-            }
-
-            JScrollPane jsp = new JScrollPane(tabla);
-            tabbedPaneUI.addTab(com.getNombre(), jsp);
-
-            return true;
-        } else {
-            return false;
+        model.setColumnIdentifiers(filas.get(0));
+        for (int i = 1; i < filas.size(); i++) {
+            model.addRow(filas.get(i));
         }
+
+        JScrollPane jsp = new JScrollPane(tabla);
+        tabbedPaneUI.addTab(com.getNombre(), jsp);
+        return true;
+//        File file = new File(com.getUbicacion());
+//        JTable tabla = new JTable();
+//        DefaultTableModel model = (DefaultTableModel) tabla.getModel();
+//
+//        if (file.exists()) {
+//
+//            String textoArchivo = "";
+//            BufferedReader br = null;
+//            String columnas = "";
+//            try {
+//                br = new BufferedReader(new FileReader(file));
+//                columnas = br.readLine();
+//            } catch (FileNotFoundException ex) {
+//                Logger.getLogger(ManejadorCsv.class.getName()).log(Level.SEVERE, null, ex);
+//            } catch (IOException ex) {
+//                Logger.getLogger(ManejadorCsv.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//            String[] s = columnas.split(",");
+//            model.setColumnCount(s.length);
+//            model.setColumnIdentifiers(s);
+//
+//            while (true) {
+//                try {
+//                    textoArchivo = "";
+//                    textoArchivo += br.readLine();
+//                } catch (IOException ex) {
+//                    Logger.getLogger(ManejadorCsv.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//
+//                if (textoArchivo.endsWith("null")) {
+//                    textoArchivo = textoArchivo.replace("null", "");
+//                    break;
+//                } else {
+//                    String[] fila = textoArchivo.split(",");
+//                    model.addRow(fila);
+//
+//                }
+//            }
+//
+//            JScrollPane jsp = new JScrollPane(tabla);
+//            
+//            tabbedPaneUI.addTab(com.getNombre(), jsp);
+//
+//            return true;
+//        } else {
+//            return false;
+//        }
     }
 
     public ArrayList<String[]> conseguirTabla(String path) {
         File file = new File(path);
-        ArrayList<String[]> tabla = new ArrayList<>();
         BufferedReader br = null;
-        try {
-            br = new BufferedReader(new FileReader(file));
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(ManejadorCsv.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        String textoArchivo = "";
-        while (true) {
+        if (file.exists()) {
             try {
-                textoArchivo = "";
-                textoArchivo += br.readLine();
+                br = new BufferedReader(new FileReader(file));
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(ManejadorCsv.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        String s = "";
+        while (true) {
+            String aux = null;
+            try {
+                aux = br.readLine();
             } catch (IOException ex) {
                 Logger.getLogger(ManejadorCsv.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-            if (textoArchivo.endsWith("null")) {
-                textoArchivo = textoArchivo.replace("null", "");
+            if (aux == null) {
+                s=s.substring(0,s.length()-1);
                 break;
             } else {
-                tabla.add(textoArchivo.split(","));
-
+                s += aux + "\n";
             }
         }
-        return tabla;
+        if (s.endsWith("\n")) {
+            s = s.substring(0, s.length() - 1);
+        }
+        AnalizadorLexicoCSV alcsv = new AnalizadorLexicoCSV(new BufferedReader(new StringReader(s)));
+        AnalizadorSintacticoCSV ascsv = new AnalizadorSintacticoCSV(alcsv);
+        try {
+            ascsv.parse();
+        } catch (Exception ex) {
+            Logger.getLogger(ManejadorCsv.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        ArrayList<String[]> filas = ascsv.filas;
+        return filas;
     }
 
     public String conseguirPathCsv(String pathArchivo) {
@@ -256,7 +281,7 @@ public class ManejadorCsv {
 
     }
 
-    public  static boolean compareString(String[] s1, String[] s2) {
+    public static boolean compareString(String[] s1, String[] s2) {
         for (int i = 0; i < s1.length; i++) {
             if (!s1[i].equals(s2[i])) {
                 return false;
