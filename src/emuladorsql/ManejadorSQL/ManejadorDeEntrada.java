@@ -43,6 +43,7 @@ public class ManejadorDeEntrada {
                         Eliminar eliminar = (Eliminar)ass.consultas.get(i);
                         eliminar.eliminar(pp.getFile(), pp);
                     }
+                    pp.escribirLinea("=================================");
                 }
             }
         } catch (Exception ex) {

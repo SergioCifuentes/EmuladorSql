@@ -112,7 +112,7 @@ public class ManejadorCsv {
                 Logger.getLogger(ManejadorCsv.class.getName()).log(Level.SEVERE, null, ex);
             }
             if (aux == null) {
-                s=s.substring(0,s.length()-1);
+                s = s.substring(0, s.length() - 1);
                 break;
             } else {
                 s += aux + "\n";
@@ -149,11 +149,29 @@ public class ManejadorCsv {
         File file = new File(conseguirPathCsv(path));
         FileWriter fw = null;
         BufferedWriter bw = null;
+        String filaAux = "";
         try {
-            fw = new FileWriter(file, true);
-            bw = new BufferedWriter(fw);
-
-            String filaAux = "";
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            while (true) {
+                String aux = null;
+                try {
+                    aux = br.readLine();
+                    
+                } catch (IOException ex) {
+                    Logger.getLogger(ManejadorCsv.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                if (aux == null) {
+                    break;
+                } else {
+                  filaAux+=aux+"\n";
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ManejadorCsv.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            fw = new FileWriter(file);
+            
             for (int i = 0; i < fila.length; i++) {
                 if (i == 0) {
                     filaAux += fila[i];
@@ -161,7 +179,7 @@ public class ManejadorCsv {
                     filaAux += "," + fila[i];
                 }
             }
-            bw.write("\n" + filaAux);
+            fw.write(filaAux);
 
         } catch (IOException ex) {
             Logger.getLogger(ManejadorCsv.class.getName()).log(Level.SEVERE, null, ex);

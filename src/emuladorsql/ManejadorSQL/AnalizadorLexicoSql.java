@@ -719,9 +719,7 @@ class AnalizadorLexicoSql implements java_cup.runtime.Scanner {
           { return new Symbol(SimboloSql.NOMBRE, yycolumn,yyline,yytext());
           }
         case 43: break;
-        case 21: 
-          { return new Symbol(SimboloSql.NOM, yycolumn,yyline,yytext());
-          }
+        
         case 44: break;
         case 24: 
           { return new Symbol(SimboloSql.VALORES, yycolumn,yyline,yytext());

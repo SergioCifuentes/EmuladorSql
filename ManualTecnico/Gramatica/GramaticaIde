@@ -1,6 +1,7 @@
 E              -> <PROYECTO name >  Comp  </PROYECTO>
 Comp     ->Carpeta Comp
 		    | Archivo Comp
+		    |Error Comp
 		    | e
 Carpeta  -><CARPETA name > Comp </CARPETA>
 Archivo  -> <ARCHIVO  name ubicacion=”path”/>

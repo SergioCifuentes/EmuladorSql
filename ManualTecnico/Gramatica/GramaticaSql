@@ -1,4 +1,5 @@
 S->           E;S
+		|Error ; S
 		|E;
 E                     -> SELECCIONAR columnas En path Filtracion 
 			| IN

@@ -609,7 +609,8 @@ class CUP$AnalizadorSintacticoSql$actions {
                 Object val = (Object) ((java_cup.runtime.Symbol) CUP$AnalizadorSintacticoSql$stack.peek()).value;
                 ArrayList<String> as = new ArrayList<>();
                 as.add((String) NOM);
-                as.add((String) val);
+                as.add(((ArrayList<String>)val).get(0));
+                
                 RESULT = as;
                 CUP$AnalizadorSintacticoSql$result = parser.getSymbolFactory().newSymbol("asignacion", 5, ((java_cup.runtime.Symbol) CUP$AnalizadorSintacticoSql$stack.elementAt(CUP$AnalizadorSintacticoSql$top - 2)), ((java_cup.runtime.Symbol) CUP$AnalizadorSintacticoSql$stack.peek()), RESULT);
             }

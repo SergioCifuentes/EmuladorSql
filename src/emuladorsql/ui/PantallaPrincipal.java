@@ -77,6 +77,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Ctrl+O ->Open");
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
@@ -404,6 +405,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
         public void cerrarProyecto() {
             file = null;
+            tabs.removeAll();
             PantallaPrincipal.this.borrarArbol();
         }
 
