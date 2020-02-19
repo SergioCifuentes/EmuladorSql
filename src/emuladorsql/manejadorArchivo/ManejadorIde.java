@@ -72,7 +72,9 @@ public class ManejadorIde {
             AnalizadorSintactico as = new AnalizadorSintactico(al);
             try {
                 as.parse();
-                
+                if (as.mensajeError!=null) {
+                    JOptionPane.showMessageDialog(pr, as.mensajeError,"Error",JOptionPane.ERROR_MESSAGE);
+                }
                 pr.recibirRaiz(as.resultado);
 
             } catch (Exception ex) {

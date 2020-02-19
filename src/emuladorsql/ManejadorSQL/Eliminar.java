@@ -64,7 +64,7 @@ public class Eliminar extends Consulta {
             aux = mdf.aplicarFiltraciones(aux, filtraciones);
         }
         mc.eliminarFila(aux, pathArchivo);
-        pp.escribirLinea((aux.size()-1) +"Elemento Insertado");
+        pp.escribirLinea((aux.size()-1) +"Elemento Eliminado");
         pp.actaulizarTabs();
     }
 

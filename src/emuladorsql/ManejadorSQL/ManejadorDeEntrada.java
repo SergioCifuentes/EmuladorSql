@@ -19,6 +19,7 @@ public class ManejadorDeEntrada {
     public void leerEntrada(String entrada,PantallaPrincipal pp){
         AnalizadorLexicoSql als = new AnalizadorLexicoSql(new StringReader(entrada));
         AnalizadorSintacticoSql ass = new AnalizadorSintacticoSql(als);
+        ass.pp=pp;
         try {
             ass.parse();
             if (ass.consultas==null) {

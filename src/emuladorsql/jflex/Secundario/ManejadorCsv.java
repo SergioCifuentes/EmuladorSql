@@ -247,7 +247,7 @@ public class ManejadorCsv {
                     aparece = true;
                 }
             }
-            if (aparece) {
+            if (!aparece) {
                 aux.add(tablaOriginal.get(j));
             }
 

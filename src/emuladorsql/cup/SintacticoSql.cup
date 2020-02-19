@@ -35,16 +35,17 @@ action code
 :}
 
     /* Terminals (tokens returned by the scanner). */
-terminal           SELECCIONAR, INSERTAR, ACTUALIZAR,ELIMINAR,EN,FILTRAR, ASIGNAR,VALORES,NOM,PC,PARA,PARC,IGU,COMA,COM,POR,PUNTO,AND,OR,ABRIG,CERIG,DIF,ABR,CER,SINPUNTOYCOMA;
+terminal           SELECCIONAR, INSERTAR, ACTUALIZAR,ELIMINAR,EN,FILTRAR, ASIGNAR,VALORES,PC,PARA,PARC,IGU,COMA,COM,POR,PUNTO,AND,OR,ABRIG,CERIG,DIF,ABR,CER,SINPUNTOYCOMA;
 terminal String    NOMBRE,PATH,NUM, ERROR;
 /* Non-terminals */
 non terminal            Inicio,S,E,columnas,Filtracion,asignacion,columIns,val,valUnico,columnasNom,op,relacional,OpLog;
 
 start with Inicio;
-Inicio::=S;
+Inicio::= S;
 S::= E:e PC S:s {:consultas.add((Consulta)e);:}
-    |E:e PC {:consultas.add((Consulta)e);:};
     
+    |error PC S
+    |;
 E::= SELECCIONAR columnas:col EN PATH:path Filtracion:f {:Select s = new Select((ArrayList<String>)col,(ArrayList<Filtracion>)f,null,(String)path);
                                                             RESULT=s;:}
     | INSERTAR EN PATH:path columIns:col VALORES PARA val:valores PARC {:Insertar insertar = new Insertar((ArrayList<String>)col,(ArrayList<String>) valores,null,(String)path);
